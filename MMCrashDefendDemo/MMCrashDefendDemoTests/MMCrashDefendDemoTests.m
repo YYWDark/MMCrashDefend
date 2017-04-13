@@ -65,8 +65,11 @@
     NSMutableDictionary *mutableDic = [NSMutableDictionary dictionary];
     
     [mutableDic setObject:nilVal forKey:nilKey];
+    XCTAssertEqual([[mutableDic allKeys] count], 0);
     [mutableDic setObject:nilVal forKey:nonNilKey];
+    id val = mutableDic[nonNilKey];
+    XCTAssertNoThrow([val length]);
     [mutableDic setObject:nonNilVal forKey:nilKey];
-    
+      XCTAssertEqual([[mutableDic allKeys] count], 1);
 }
 @end
