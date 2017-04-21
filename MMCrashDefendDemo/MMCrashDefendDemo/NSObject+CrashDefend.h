@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#define isNeedNull
 
 @interface NSNull (CrashDefend)
 
@@ -20,9 +21,15 @@
 
 @end
 
+@interface NSArray (CrashDefend)
+
+@end
+
+
+
 @interface NSObject (CrashDefend)
 + (void)mm_swizzleWithSourceMethod:(SEL)sourceSel
-                         targetSel:(SEL)sel;
+                         targetSel:(SEL)targetSel;
 
 + (void)mm_swizzleWithSourceMethod:(SEL)sourceSel
                    targetClassName:(NSString *)targetClassName
@@ -39,5 +46,6 @@
                    targetMethod:(SEL)targetSel;
 
 
+- (void)mm_logErrorMessage:(NSString *)message;
 @end
 

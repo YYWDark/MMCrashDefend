@@ -8,28 +8,12 @@
 
 #import "NSObject+CrashDefend.h"
 #import <objc/objc-runtime.h>
-
-
+#import "MMErrorMessageInformation.h"
 @implementation NSObject (CrashDefend)
-+ (void)mm_swizzleWithSourceMethod:(SEL)origSel
-                         targetSel:(SEL)altSel {
-    Method origMethod = class_getInstanceMethod(self, origSel);
-    Method altMethod = class_getInstanceMethod(self, altSel);
-    if (!origMethod || !altMethod) {
-        return ;
-    }
-    class_addMethod(self,
-                    origSel,
-                    class_getMethodImplementation(self, origSel),
-                    method_getTypeEncoding(origMethod));
-    class_addMethod(self,
-                    altSel,
-                    class_getMethodImplementation(self, altSel),
-                    method_getTypeEncoding(altMethod));
-    method_exchangeImplementations(class_getInstanceMethod(self, origSel),
-                                   class_getInstanceMethod(self, altSel));
-    
-//    [self mm_swizzleWithSourceClass:[self class]   sourceMethod:sourceSel targetClass:[self class] targetMethod:targetSel];
++ (void)mm_swizzleWithSourceMethod:(SEL)sourceSel
+                         targetSel:(SEL)targetSel {
+ 
+    [self mm_swizzleWithSourceClass:[self class]   sourceMethod:sourceSel targetClass:[self class] targetMethod:targetSel];
 }
 
 + (void)mm_swizzleWithSourceMethod:(SEL)sourceSel
@@ -48,59 +32,34 @@
     Method srcInstance = class_getInstanceMethod(sourceClass, sourceSel);
     Method tarInstance = class_getInstanceMethod(targetClass, targetSel);
     method_exchangeImplementations(srcInstance, tarInstance);
-    
-    /*
-    method_exchangeImplementations(srcInstance, tarInstance);
-        class_addMethod(self,
-                        sourceSel,
-                        class_getMethodImplementation(self, sourceSel),
-                        method_getTypeEncoding(srcInstance));
-        class_addMethod(self,
-                        targetSel,
-                        class_getMethodImplementation(self, targetSel),
-                        method_getTypeEncoding(tarInstance));
-    
-        method_exchangeImplementations(class_getInstanceMethod(self, sourceSel),
-                                       class_getInstanceMethod(self, targetSel));
-    
-   */
+
 }
 
 + (void)mm_swizzleWithSameClass:(Class)class
                    sourceMethod:(SEL)sourceSel
                    targetMethod:(SEL)targetSel {
-    
-    Method srcInstance = class_getInstanceMethod(self, sourceSel);
-    Method tarInstance = class_getInstanceMethod(self, targetSel);
-    
-    method_exchangeImplementations(srcInstance, tarInstance);
-    class_addMethod(self,
-                    sourceSel,
-                    class_getMethodImplementation(self, sourceSel),
-                    method_getTypeEncoding(srcInstance));
-    class_addMethod(self,
-                    targetSel,
-                    class_getMethodImplementation(self, targetSel),
-                    method_getTypeEncoding(tarInstance));
-    
-    method_exchangeImplementations(class_getInstanceMethod(self, sourceSel),
-                                   class_getInstanceMethod(self, targetSel));
+   [self mm_swizzleWithSourceClass:class   sourceMethod:sourceSel targetClass:class targetMethod:targetSel];
 }
 
+
+- (void)mm_logErrorMessage:(NSString *)message {
+    NSString *startStr = @"=======================错误信息=======================";
+    NSString *endStr = @"=====================================================";
+//    NSString *str = [NSString stringWithFormat:@"\n%@\n错误提示：\n%@\n调用栈情况：\n%@\n\n%@",startStr, message, [NSThread callStackSymbols], endStr];
+    
+    NSLog(@"%@",message);
+}
 @end
 
-
+#pragma mark - NSDictionary && NSMutableDictionary
 @implementation NSDictionary (CrashDefend)
-static dispatch_once_t onceToken;
-
-
 
 + (void)load {
+   static dispatch_once_t onceToken;
    dispatch_once(&onceToken, ^{
        NSString *className = @"__NSPlaceholderDictionary";
        [self mm_swizzleWithSourceMethod:@selector(mm_initWithObjects:forKeys:count:) targetClassName:className targetMethod:@selector(initWithObjects:forKeys:count:)];
        [self mm_swizzleWithSourceMethod:@selector(mm_dictionaryWithObjects:forKeys:count:) targetClassName:className targetMethod:@selector(dictionaryWithObjects:forKeys:count:)];
-       
           });
 }
 
@@ -113,11 +72,9 @@ static dispatch_once_t onceToken;
         id obj = objects[index];
         if (!key) continue;
         if (!obj) obj = [NSNull null];
-        
         newKeys[index] = key;
         newObjects[index] = obj;
         newCount ++;
-
     }
     return [self mm_initWithObjects:newObjects forKeys:newKeys count:newCount];
 }
@@ -131,7 +88,6 @@ static dispatch_once_t onceToken;
         id obj = objects[index];
         if (!key) continue;
         if (!obj) obj = [NSNull null];
-        
         newKeys[index] = key;
         newObjects[index] = obj;
         newCount ++;
@@ -146,6 +102,7 @@ static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         Class class = NSClassFromString(@"__NSDictionaryM");
         [class mm_swizzleWithSourceMethod:@selector(setObject:forKey:) targetSel:@selector(mm_setObject:forKey:)];
+        
     });
 }
 
@@ -157,6 +114,125 @@ static dispatch_once_t onceToken;
 }
 @end
 
+#pragma mark - NSArray
+@implementation NSArray (CrashDefend)
++ (void)load {
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        [self mm_swizzleWithSourceMethod:@selector(mm_initWithObjects:count:) targetClassName:@"__NSPlaceholderArray" targetMethod:@selector(initWithObjects:count:)];
+        [self mm_swizzleWithSourceMethod:@selector(mm_objectAtIndex:) targetClassName:@"__NSArrayI" targetMethod:@selector(objectAtIndex:)];
+        [self mm_swizzleWithSourceMethod:@selector(mm_emptyArrayobjectAtIndex:) targetClassName:@"__NSArray0" targetMethod:@selector(objectAtIndex:)];
+        [self mm_swizzleWithSourceMethod:@selector(mm_singleArrayobjectAtIndex:) targetClassName:@"__NSSingleObjectArrayI" targetMethod:@selector(objectAtIndex:)];
+    });
+}
+
+- (instancetype)mm_initWithObjects:(const id [])objects count:(NSUInteger)cnt {
+    NSUInteger newCount = 0;
+    id newObjects[cnt];
+    for (int index = 0; index < cnt; index ++) {
+        id obj = objects[index];
+        if (!obj) {
+            [self mm_logErrorMessage:Array_InitMethodContainedNil];
+        }
+#ifdef isNeedNull
+        if (!obj) obj = [NSNull null];
+        newObjects[index] = obj;
+        newCount ++;
+#else
+        if (!obj) continue;
+        newObjects[newCount] = obj;
+        newCount ++;
+#endif
+        
+    }
+    return [self mm_initWithObjects:newObjects count:newCount];
+}
+
+- (instancetype)mm_objectAtIndex:(NSUInteger)index {
+    if (index >= self.count) {
+        [self mm_logErrorMessage:Array_BeyondBounds];
+        return nil;
+    }
+    return [self mm_objectAtIndex:index];
+}
+
+- (instancetype)mm_emptyArrayobjectAtIndex:(NSUInteger)index {
+    if (index >= self.count) {
+        [self mm_logErrorMessage:Array_BeyondBounds];
+        return nil;
+    }
+    return [self mm_emptyArrayobjectAtIndex:index];
+}
+
+- (instancetype)mm_singleArrayobjectAtIndex:(NSUInteger)index {
+    if (index >= self.count) {
+        [self mm_logErrorMessage:Array_BeyondBounds];
+        return nil;
+    }
+    return [self mm_singleArrayobjectAtIndex:index];
+}
+
+@end
+
+@implementation NSMutableArray (CrashDefend)
++ (void)load {
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        [self mm_swizzleWithSourceMethod:@selector(mm_mutableArrayObjectAtIndex:) targetClassName:@"__NSArrayM" targetMethod:@selector(objectAtIndex:)];
+        [self mm_swizzleWithSourceMethod:@selector(mm_addObject:) targetClassName:@"__NSArrayM" targetMethod:@selector(addObject:)];
+        [self mm_swizzleWithSourceMethod:@selector(mm_removeObjectAtIndex:) targetClassName:@"__NSArrayM" targetMethod:@selector(removeObjectAtIndex:)];
+        [self mm_swizzleWithSourceMethod:@selector(mm_insertObject:atIndex:) targetClassName:@"__NSArrayM" targetMethod:@selector(insertObject:atIndex:)];
+    });
+}
+
+
+- (instancetype)mm_mutableArrayObjectAtIndex:(NSUInteger)index {
+    if (index >= self.count) {
+        [self mm_logErrorMessage:Array_BeyondBounds];
+        return nil;
+    }
+    return [self mm_mutableArrayObjectAtIndex:index];
+}
+
+- (void)mm_addObject:(id)object {
+    if(!object) {
+    [self mm_logErrorMessage:Array_addNil];
+#ifdef isNeedNull
+      object = [NSNull null];
+#else
+      return;
+#endif
+    }
+    [self mm_addObject:object];
+}
+
+- (void)mm_removeObjectAtIndex:(NSUInteger)index {
+    if (index >= self.count) {
+        [self mm_logErrorMessage:Array_BeyondBounds];
+        return;
+    }
+    return [self mm_removeObjectAtIndex:index];
+}
+
+- (void)mm_insertObject:(id)anObject atIndex:(NSUInteger)index {
+    if (index > self.count) {
+        [self mm_logErrorMessage:Array_BeyondBounds];
+        return;
+    }
+    
+    if (!anObject) {
+#ifdef isNeedNull
+        anObject = [NSNull null];
+#else   
+        [self mm_logErrorMessage:Array_addNil];
+        return;
+#endif
+    }
+    return [self mm_insertObject:anObject atIndex:index];
+}
+@end
+
+#pragma mark - NSNull
 @implementation NSNull (CrashDefend)
 void swizzle(Class class, SEL sourceSel, SEL targetSel) {
     Method origMethod = class_getInstanceMethod(class, sourceSel);
@@ -192,4 +268,5 @@ void swizzle(Class class, SEL sourceSel, SEL targetSel) {
     [invocation setReturnValue:buffer];
     free(buffer);
 }
+
 @end

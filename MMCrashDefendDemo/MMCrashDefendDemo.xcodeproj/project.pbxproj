@@ -36,6 +36,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		756568BE1EA9E8B700A80466 /* MMErrorMessageInformation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MMErrorMessageInformation.h; sourceTree = "<group>"; };
 		75F672C11E9F54E500DD31B5 /* MMCrashDefendDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MMCrashDefendDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		75F672C51E9F54E500DD31B5 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		75F672C71E9F54E500DD31B5 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -47,7 +48,7 @@
 		75F672D31E9F54E500DD31B5 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		75F672D51E9F54E500DD31B5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		75F672DA1E9F54E500DD31B5 /* MMCrashDefendDemoTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MMCrashDefendDemoTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		75F672DE1E9F54E500DD31B5 /* MMCrashDefendDemoTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MMCrashDefendDemoTests.m; sourceTree = "<group>"; };
+		75F672DE1E9F54E500DD31B5 /* MMCrashDefendDemoTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = MMCrashDefendDemoTests.m; path = MMCrashDefendDemoTests/MMCrashDefendDemoTests.m; sourceTree = SOURCE_ROOT; };
 		75F672E01E9F54E500DD31B5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		75F672E51E9F54E500DD31B5 /* MMCrashDefendDemoUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MMCrashDefendDemoUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		75F672E91E9F54E500DD31B5 /* MMCrashDefendDemoUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MMCrashDefendDemoUITests.m; sourceTree = "<group>"; };
@@ -104,8 +105,10 @@
 		75F672C31E9F54E500DD31B5 /* MMCrashDefendDemo */ = {
 			isa = PBXGroup;
 			children = (
+				756568BE1EA9E8B700A80466 /* MMErrorMessageInformation.h */,
 				75F672F71E9F54F400DD31B5 /* NSObject+CrashDefend.h */,
 				75F672F81E9F54F400DD31B5 /* NSObject+CrashDefend.m */,
+				75F672DE1E9F54E500DD31B5 /* MMCrashDefendDemoTests.m */,
 				75F672C71E9F54E500DD31B5 /* AppDelegate.h */,
 				75F672C81E9F54E500DD31B5 /* AppDelegate.m */,
 				75F672CA1E9F54E500DD31B5 /* ViewController.h */,
@@ -130,7 +133,6 @@
 		75F672DD1E9F54E500DD31B5 /* MMCrashDefendDemoTests */ = {
 			isa = PBXGroup;
 			children = (
-				75F672DE1E9F54E500DD31B5 /* MMCrashDefendDemoTests.m */,
 				75F672E01E9F54E500DD31B5 /* Info.plist */,
 			);
 			path = MMCrashDefendDemoTests;
@@ -522,6 +524,7 @@
 				75F672F01E9F54E500DD31B5 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		75F672F11E9F54E500DD31B5 /* Build configuration list for PBXNativeTarget "MMCrashDefendDemoTests" */ = {
 			isa = XCConfigurationList;
@@ -530,6 +533,7 @@
 				75F672F31E9F54E500DD31B5 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		75F672F41E9F54E500DD31B5 /* Build configuration list for PBXNativeTarget "MMCrashDefendDemoUITests" */ = {
 			isa = XCConfigurationList;
@@ -538,6 +542,7 @@
 				75F672F61E9F54E500DD31B5 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
