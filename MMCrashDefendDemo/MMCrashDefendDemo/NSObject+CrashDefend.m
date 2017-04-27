@@ -156,6 +156,7 @@
     return [self mm_objectAtIndex:index];
 }
 
+
 - (instancetype)mm_emptyArrayobjectAtIndex:(NSUInteger)index {
     if (index >= self.count) {
         [self mm_logErrorMessage:Array_BeyondBounds];
@@ -184,7 +185,6 @@
         [self mm_swizzleWithSourceMethod:@selector(mm_insertObject:atIndex:) targetClassName:@"__NSArrayM" targetMethod:@selector(insertObject:atIndex:)];
     });
 }
-
 
 - (instancetype)mm_mutableArrayObjectAtIndex:(NSUInteger)index {
     if (index >= self.count) {

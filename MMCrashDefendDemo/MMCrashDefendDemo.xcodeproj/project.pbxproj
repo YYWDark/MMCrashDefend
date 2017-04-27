@@ -105,10 +105,10 @@
 		75F672C31E9F54E500DD31B5 /* MMCrashDefendDemo */ = {
 			isa = PBXGroup;
 			children = (
+				75F672DE1E9F54E500DD31B5 /* MMCrashDefendDemoTests.m */,
 				756568BE1EA9E8B700A80466 /* MMErrorMessageInformation.h */,
 				75F672F71E9F54F400DD31B5 /* NSObject+CrashDefend.h */,
 				75F672F81E9F54F400DD31B5 /* NSObject+CrashDefend.m */,
-				75F672DE1E9F54E500DD31B5 /* MMCrashDefendDemoTests.m */,
 				75F672C71E9F54E500DD31B5 /* AppDelegate.h */,
 				75F672C81E9F54E500DD31B5 /* AppDelegate.m */,
 				75F672CA1E9F54E500DD31B5 /* ViewController.h */,
